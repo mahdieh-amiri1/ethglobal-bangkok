@@ -73,8 +73,6 @@ contract Subscription is ISubscription, OAppReceiver, ERC721 {
         // Mint the subscription NFT with the calculated ETH balance
         _safeMint(to, newTokenId);
         _subscriptions[newTokenId] = equivalentETH;
-
-        emit Spend(tokenId, equivalentETH);
     }
 
     function setPaymaster(address _payMaster) external onlyOwner {
