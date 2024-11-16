@@ -75,6 +75,17 @@ contract Subscription is ISubscription, OAppReceiver, ERC721 {
         _subscriptions[newTokenId] = equivalentETH;
     }
 
+    function mintWithNative() external payable {
+        require(msg.value > 0, "Insufficient balance");
+
+        // Increment the token ID counter
+        uint256 newTokenId = ++_currentTokenId;
+
+        // Mint the subscription NFT with the sent ETH balance
+        _safeMint(msg.sender, newTokenId);
+        _subscriptions[newTokenId] = msg.value;
+    }
+
     function setPaymaster(address _payMaster) external onlyOwner {
         _setPaymaster(_payMaster);
     }
