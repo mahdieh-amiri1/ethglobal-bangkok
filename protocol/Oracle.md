@@ -21,10 +21,8 @@ npx hardhat ignition deploy ./ignition/modules/Base-Oracle.js --network base_sep
 
 # Deployed Contracts
 ### Ethereum Sepolia
-`0xe27E30D73CB9970fd1E31Ed0b9F4cdAE3f29b418`
-
+`0x7A42561522C343d5C3877133B64c8802DBb8fc23`
 ### Arbitrum Sepolia
-`0xb590A65520597309854F19F9f7ECF8EBDe8d81D3`
-
+`0xD102d70B672C863F28e8d4984953fA7Ef477327d`
 ### Base Sepolia
-`0xe5224Bde7D0CBc086EeeE089e8CFEf5E4f6ddAd3`
+`0x9b266a66323C8055550E6b412a62E8b7E1b96e76`
