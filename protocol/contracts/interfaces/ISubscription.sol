@@ -6,7 +6,12 @@ import {IOAppReceiver} from "@layerzerolabs/oapp-evm/contracts/oapp/interfaces/I
 import {IERC721} from "@openzeppelin/contracts/token/ERC721/IERC721.sol";
 
 interface ISubscription is IOAppReceiver, IERC721 {
-    event SubscriptionMinted(address indexed to, uint256 tokenId, uint256 value);
+    event SubscriptionMinted(
+        uint256 tokenId,
+        address indexed to,
+        string tokenURI,
+        uint256 value
+    );
     event Spend(uint256 indexed tokenId, uint256 indexed amount);
     event PaymasterChanged(
         address indexed oldPaymaster,

@@ -29,9 +29,7 @@ contract Subscription is ISubscription, OAppReceiver, ERC721, Ownable {
         address _owner
     ) OAppCore(_endpoint, _owner) ERC721("McGas", "MCG") {}
 
-    function subscriptionOf(
-        uint256 tokenId
-    ) public view returns (uint256) {
+    function subscriptionOf(uint256 tokenId) public view returns (uint256) {
         _requireOwned(tokenId);
         return _subscriptions[tokenId];
     }
@@ -44,22 +42,32 @@ contract Subscription is ISubscription, OAppReceiver, ERC721, Ownable {
         return _ownerOf(tokenId) == owner && subscriptionOf(tokenId) >= amount;
     }
 
-    function mintWithERC20(address to, address tokenAddress, uint256 tokenAmount) external onlyOwner {
+    function mintWithERC20(
+        address to,
+        address tokenAddress,
+        uint256 tokenAmount
+    ) external onlyOwner {
         _validateTokenTransfer(tokenAddress, tokenAmount);
-        uint256 equivalentETH = _calculateEquivalentETH(tokenAddress, tokenAmount);
+        uint256 equivalentETH = _calculateEquivalentETH(
+            tokenAddress,
+            tokenAmount
+        );
         uint256 newTokenId = _mintSubscription(to, equivalentETH);
 
-        emit SubscriptionMinted(to, newTokenId, equivalentETH);
+        emit SubscriptionMinted(newTokenId, to, tokenURI, equivalentETH);
     }
 
     function mintWithNative(address to) external payable {
         require(msg.value > 0, "Insufficient balance");
         uint256 newTokenId = _mintSubscription(msg.sender, msg.value);
 
-        emit SubscriptionMinted(to, newTokenId, msg.value);
+        emit SubscriptionMinted(newTokenId, to, msg.value);
     }
 
-    function spendSubscription(uint256 tokenId, uint256 amount) external onlyPaymaster {
+    function spendSubscription(
+        uint256 tokenId,
+        uint256 amount
+    ) external onlyPaymaster {
         _spendSubscription(tokenId, amount);
     }
 
@@ -79,7 +87,10 @@ contract Subscription is ISubscription, OAppReceiver, ERC721, Ownable {
         address,
         bytes calldata
     ) internal override {
-        (uint256 tokenId, uint256 amount) = abi.decode(payload, (uint256, uint256));
+        (uint256 tokenId, uint256 amount) = abi.decode(
+            payload,
+            (uint256, uint256)
+        );
         _spendSubscription(tokenId, amount);
     }
 
@@ -91,7 +102,10 @@ contract Subscription is ISubscription, OAppReceiver, ERC721, Ownable {
         emit Spend(tokenId, amount);
     }
 
-    function _mintSubscription(address to, uint256 value) internal returns (uint256) {
+    function _mintSubscription(
+        address to,
+        uint256 value
+    ) internal returns (uint256) {
         uint256 newTokenId = ++_currentTokenId;
         _safeMint(to, newTokenId);
         _subscriptions[newTokenId] = value;
@@ -99,21 +113,35 @@ contract Subscription is ISubscription, OAppReceiver, ERC721, Ownable {
         return newTokenId;
     }
 
-    function _calculateEquivalentETH(address tokenAddress, uint256 tokenAmount) internal view returns (uint256) {
+    function _calculateEquivalentETH(
+        address tokenAddress,
+        uint256 tokenAmount
+    ) internal view returns (uint256) {
         int64 tokenPriceInETH = oracle.getAssetPrice(tokenAddress);
         require(tokenPriceInETH > 0, "Invalid token price from Oracle");
-        return (uint256(tokenPriceInETH) * tokenAmount) / 10 ** uint256(oracle.Decimals());
+        return
+            (uint256(tokenPriceInETH) * tokenAmount) /
+            10 ** uint256(oracle.Decimals());
     }
 
-    function _validateTokenTransfer(address tokenAddress, uint256 tokenAmount) internal {
+    function _validateTokenTransfer(
+        address tokenAddress,
+        uint256 tokenAmount
+    ) internal {
         require(tokenAddress != address(0), "Invalid token address");
         require(tokenAmount > 0, "Token amount must be greater than zero");
 
         IERC20 token = IERC20(tokenAddress);
-        require(token.transferFrom(msg.sender, address(this), tokenAmount), "Token transfer failed");
+        require(
+            token.transferFrom(msg.sender, address(this), tokenAmount),
+            "Token transfer failed"
+        );
     }
 
-    function _requireEnoughSubscription(uint256 tokenId, uint256 amount) internal view {
+    function _requireEnoughSubscription(
+        uint256 tokenId,
+        uint256 amount
+    ) internal view {
         uint256 subscription = subscriptionOf(tokenId);
         require(subscription >= amount, "Insufficient subscription balance");
     }
