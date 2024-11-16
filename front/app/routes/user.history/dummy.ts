@@ -2,13 +2,31 @@ import { Payment } from "./columns";
 
 export const payments: Payment[] = [
   {
-    id: "728ed52f",
+    network: "ethereum sepolia",
     amount: 100,
-    status: "pending",
   },
   {
-    id: "489e1d42",
+    network: "base sepolia",
     amount: 125,
-    status: "processing",
+  },
+  {
+    network: "arbitrum sepolia",
+    amount: 125,
+  },
+  {
+    network: "linea testnet",
+    amount: 125,
+  },
+  {
+    network: "polygon testnet",
+    amount: 125,
+  },
+  {
+    network: "scroll testnet",
+    amount: 125,
+  },
+  {
+    network: "flow testnet",
+    amount: 125,
   },
 ];
