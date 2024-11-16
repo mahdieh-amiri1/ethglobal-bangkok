@@ -4,12 +4,19 @@ pragma solidity ^0.8.20;
 import "@layerzerolabs/oapp-evm/contracts/oapp/OApp.sol";
 import {Ownable} from "@openzeppelin/contracts/access/Ownable.sol";
 import {ERC721} from "@openzeppelin/contracts/token/ERC721/ERC721.sol";
-
+import {ERC721} from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import {ISubscription} from "./interfaces/ISubscription.sol";
+
+interface IOracle {
+    function getAssetPrice(address asset) external view returns (int64);
+    function Decimals() external view returns (int256);
+}
 
 contract Subscription is ISubscription, OAppReceiver, ERC721 {
     address public paymaster;
+    IOracle public Oracle;
     mapping(uint256 tokenId => uint256) private _subscriptions;
+    uint256 private _currentTokenId; // Counter for token IDs
 
     constructor(
         address _endpoint,
@@ -38,17 +45,45 @@ contract Subscription is ISubscription, OAppReceiver, ERC721 {
         return _ownerOf(tokenId) == owner && subscriptionOf(tokenId) >= amount;
     }
 
-    function mint(
+    function mintWithERC20(
         address to,
-        uint256 tokenId,
-        uint256 amount
+        address tokenAddress,
+        uint256 tokenAmount
     ) external onlyOwner {
-        _safeMint(to, tokenId);
-        _subscriptions[tokenId] = amount;
+        require(tokenAddress != address(0), "Invalid token address");
+        require(tokenAmount > 0, "Token amount must be greater than zero");
+
+        // Transfer ERC20 tokens from the user to the contract
+        IERC20 token = IERC20(tokenAddress);
+        require(
+            token.transferFrom(msg.sender, address(this), tokenAmount),
+            "Token transfer failed"
+        );
+
+        // Get the price of the ERC20 token in ETH from the Oracle
+        int64 tokenPriceInETH = Oracle.getAssetPrice(tokenAddress);
+        require(tokenPriceInETH > 0, "Invalid token price from Oracle");
+
+        // Calculate the equivalent ETH value of the transferred tokens
+        uint256 equivalentETH = (uint256(tokenPriceInETH) * tokenAmount) / 10 ** uint256(Oracle.Decimals());
+
+        // Increment the token ID counter
+        uint256 newTokenId = ++_currentTokenId;
+
+        // Mint the subscription NFT with the calculated ETH balance
+        _safeMint(to, newTokenId);
+        _subscriptions[newTokenId] = equivalentETH;
+
+        emit Spend(tokenId, equivalentETH);
     }
 
     function setPaymaster(address _payMaster) external onlyOwner {
         _setPaymaster(_payMaster);
+    }
+
+    function setOracleAddress(address _oracleAddress) external onlyOwner {
+        require(_oracleAddress != address(0), "Invalid Oracle address");
+        Oracle = IOracle(oracleAddress);
     }
 
     function _lzReceive(
