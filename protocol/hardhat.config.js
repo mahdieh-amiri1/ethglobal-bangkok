@@ -34,8 +34,8 @@ module.exports = {
   etherscan: {
     apiKey: {
       // Is not required by blockscout. Can be any non-empty string
-      sepolia: "abc",
-      base_sepolia: "abc",
+      sepolia: "S2RQDHR7DPW7Z2ZJY3KM9MPSP2BEQJH252",
+      base_sepolia: "FIGBJBHU8V471Q9CBDG7H4RX52DRVQ79H8",
       optimism_sepolia: "abc",
       arbitrum_sepolia: "W2DSBWYAP17VD1FCJGX2X34MXU6QKKCGSP"
     },
