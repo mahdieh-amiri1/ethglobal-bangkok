@@ -1,6 +1,6 @@
 specVersion: 0.0.6
 description: MultichainTest subgraph v1
-repository: http://gitgame.lan/landrocker_blockchain/landrocker-subgraph
+repository: https://github.com/mahdieh-amiri1/ethglobal-bangkok
 features:
   - fullTextSearch
   - ipfsOnEthereumContracts
