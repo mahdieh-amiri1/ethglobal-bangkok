@@ -3,8 +3,9 @@ pragma solidity ^0.8.20;
 
 import "@pythnetwork/pyth-sdk-solidity/IPyth.sol";
 import "@pythnetwork/pyth-sdk-solidity/AbstractPyth.sol";
+import {Ownable} from "@openzeppelin/contracts/access/Ownable.sol";
 
-contract Oracle {
+contract Oracle is Ownable{
     IPyth public immutable pyth;
     int256 public Decimals = 8;
 
@@ -22,7 +23,7 @@ contract Oracle {
      * @param pythContractAddress Address of the Pyth contract.
      * @param ethPriceFeedId Price feed ID for ETH.
      */
-    constructor(address pythContractAddress, bytes32 ethPriceFeedId) {
+    constructor(address pythContractAddress, bytes32 ethPriceFeedId) Ownable(msg.sender) {
         require(pythContractAddress != address(0), "Invalid Pyth contract address");
         pyth = IPyth(pythContractAddress);
         ethPriceId = ethPriceFeedId;
@@ -58,7 +59,7 @@ contract Oracle {
      * @notice Adds a new price ID to the tracked list.
      * @param priceId Price feed ID to add.
      */
-    function addPriceId(bytes32 priceId) external {
+    function addPriceId(bytes32 priceId) onlyOwner external {
         require(!_isPriceIdTracked(priceId), "Price ID already tracked");
         priceIds.push(priceId);
         emit PriceIdAdded(priceId);
@@ -68,7 +69,7 @@ contract Oracle {
      * @notice Removes a price ID from the tracked list.
      * @param priceId Price feed ID to remove.
      */
-    function removePriceId(bytes32 priceId) external {
+    function removePriceId(bytes32 priceId) onlyOwner external {
         require(_isPriceIdTracked(priceId), "Price ID not tracked");
 
         uint256 length = priceIds.length;
