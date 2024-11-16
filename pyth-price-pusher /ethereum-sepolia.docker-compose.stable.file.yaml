@@ -1,0 +1,31 @@
+# Example: https://github.com/pyth-network/pyth-crosschain/blob/main/apps/price_pusher/docker-compose.stable.sample.yaml
+services:
+  price-pusher:
+    image: public.ecr.aws/pyth-network/xc-price-pusher:v8.3.0
+    restart: always
+    command:
+      - "npm"
+      - "run"
+      - "start"
+      - "--"
+      - "evm"
+      - "--endpoint"
+      # Replace this with RPC endpoint URL for the EVM network.
+      - "wss://eth-sepolia.g.alchemy.com/v2/aXwNlSi9F-WAMRDjW4DSe2uY8ePVv8wD"
+      - "--mnemonic-file"
+      - "/mnemonic"
+      # Replace this with the address of the Pyth contract on the EVM network.
+      - "--pyth-contract-address"
+      - "0xDd24F84d36BF92C65F92307595335bdFab5Bbd21"
+      - "--price-service-endpoint"
+      - "https://hermes.pyth.network" # Replace this with a private Hermes RPC for more reliability
+      - "--price-config-file"
+      - "/price_config"
+    configs:
+      - mnemonic
+      - price_config
+configs:
+  mnemonic:
+    file: ./mnemonic.txt
+  price_config:
+    file: ethereum-sepolia-config.yaml
