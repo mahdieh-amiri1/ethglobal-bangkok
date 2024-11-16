@@ -1,4 +1,4 @@
-# ethglobal-bangkok
+# CREATED FOR ETHGLOBAL BANGKOK 2024
 
 ## Gas Sponsorship Subscription Platform
 
