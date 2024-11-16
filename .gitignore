@@ -73,7 +73,7 @@ web_modules/
 .yarn-integrity
 
 # dotenv environment variable files
-.env
+protocol/.env
 .env.development.local
 .env.test.local
 .env.production.local
@@ -128,3 +128,29 @@ dist
 .yarn/build-state.yml
 .yarn/install-state.gz
 .pnp.*
+
+
+.idea
+
+node_modules
+protocol/.env
+
+# Hardhat files
+/cache
+/artifacts
+/protocol/cache
+/protocol/artifacts
+
+# TypeChain files
+/typechain
+/typechain-types
+
+# solidity-coverage files
+/coverage
+/coverage.json
+
+# Hardhat Ignition default folder for deployments against a local node
+/protocol/ignition/deployments/chain-421614
+/protocol/ignition/deployments/chain-11155111
+/protocol/ignition/deployments/chain-84532
+
