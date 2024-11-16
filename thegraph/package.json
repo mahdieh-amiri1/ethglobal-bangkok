@@ -1,0 +1,53 @@
+{
+  "name": "subgraph-multichain",
+  "version": "1.0.0",
+  "main": "index.js",
+  "license": "MIT", 
+  "scripts": {
+    "test": "graph test",
+    "codegen": "graph codegen",
+    "build": "graph build",
+    "gen": "graph codegen&&graph build",  
+    "prepare:polygon": "mustache config/polygon.json subgraph.template.yaml > subgraph.yaml", 
+    "prepare:amoy": "mustache config/amoy.json subgraph.template.yaml > subgraph.yaml",
+    "prepare:localhost": "mustache config/localhost.json subgraph.template.yaml > subgraph.yaml",
+    "deploy:sepolia:studio": "graph deploy --studio storage",
+    "deploy:arbitrum-one:studio": "graph deploy --studio storage_arbitrum",
+    "deploy:mainnet:lagecy": "graph deploy --studio storage"
+  },
+  "devDependencies": {
+    "@graphprotocol/client-cli": "^3.0.7",
+    "@nomicfoundation/hardhat-chai-matchers": "^2.0.0",
+    "@nomicfoundation/hardhat-ethers": "^3.0.0",
+    "@nomicfoundation/hardhat-ignition": "^0.15.0",
+    "@nomicfoundation/hardhat-ignition-ethers": "^0.15.0",
+    "@nomicfoundation/hardhat-network-helpers": "^1.0.0",
+    "@nomicfoundation/hardhat-toolbox": "^5.0.0",
+    "@nomicfoundation/hardhat-verify": "^2.0.0",co
+    "@typechain/ethers-v6": "^0.5.0",
+    "@typechain/hardhat": "^9.0.0",
+    "@types/chai": "^4.2.0",
+    "@types/mocha": ">=9.1.0",
+    "@types/node": ">=18.0.0",
+    "chai": "^4.2.0",
+    "ethers": "^6.4.0",
+    "hardhat": "^2.22.15",
+    "hardhat-gas-reporter": "^1.0.8",
+    "matchstick-as": "^0.6.0",
+    "solidity-coverage": "^0.8.0",
+    "typechain": "^8.3.0",
+    "typescript": ">=4.5.0"
+  },
+  "dependencies": {
+    "@graphprotocol/graph-ts": "^0.34.0",
+    "@mikro-orm/core": "^5.9.8",
+    "@mikro-orm/postgresql": "^5.9.4",
+    "ethers-utils": "^2.1.11",
+    "mustache": "^4.2.0",
+    "node": "^14.0.0",
+    "postgres": "^3.4.3",
+    "source-map-support": "^0.5.21",
+    "ts-node": "^10.9.2",
+    "uuid": "^9.0.0"
+  }
+}

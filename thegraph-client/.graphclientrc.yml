@@ -1,0 +1,45 @@
+sources:
+  - name: sepolia
+    handler:
+      graphql:
+        endpoint: https://api.studio.thegraph.com/query/53570/storage/version/latest
+    transforms:
+      - prefix:
+          value: sepolia_
+          includeRootOperations: true
+          includeTypes: false
+
+  - name: arbitrum-one
+    handler:
+      graphql:
+        endpoint: https://api.studio.thegraph.com/query/53570/storage_arbitrum/version/latest
+    transforms:
+      - prefix:
+          value: arbitrum_
+          includeRootOperations: true
+          includeTypes: false
+
+additionalTypeDefs: |
+  extend type Query {
+    cross_storageDatas: [StorageData!]!
+  }
+
+# additionalResolvers:
+#   - ./resolvers.ts
+# documents:
+#   - ./graphql/GetStorageDatas.gql
+
+# codegen:
+#   contextType: "MeshContext & { chainNamee: string }"
+#     transforms:
+#       - autoTypeMerging: true
+#   - name: arbitrum-one
+#     handler:
+#       graphql:
+#         endpoint: https://api.studio.thegraph.com/query/53570/storage_arbitrum/version/latest
+#     transforms:
+#       - autoTypeMerging: true
+
+# documents: "./graphql/*.{gql,graphql}"
+
+##################################

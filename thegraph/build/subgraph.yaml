@@ -1,0 +1,49 @@
+specVersion: 0.0.6
+description: MultichainTest subgraph v1
+repository: https://github.com/mahdieh-amiri1/ethglobal-bangkok
+features:
+  - ipfsOnEthereumContracts
+schema:
+  file: schema.graphql
+dataSources:
+  - kind: ethereum/contract
+    name: Storage
+    network: arbitrum-one
+    source:
+      address: "0xbe6e139f130d74693c876e85015ed56549ce0057"
+      abi: Storage
+      startBlock: 271706589
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.6
+      language: wasm/assemblyscript
+      entities:
+        - StorageData
+      abis:
+        - name: Storage
+          file: Storage/abis/Storage.json
+      eventHandlers:
+        - event: SetData(address,uint256,uint256)
+          handler: handleSetData
+      file: Storage/Storage.wasm
+  - kind: ethereum/contract
+    name: Subscription
+    network: arbitrum-one
+    source:
+      address: "0x8b85e4b6f3cac67468c07c0318eb6d3aedce7a4a"
+      abi: Subscription
+      startBlock: 97761749
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.6
+      language: wasm/assemblyscript
+      entities:
+        - SubscriptionNFT
+        - SubscriptionStat
+      abis:
+        - name: Subscription
+          file: Subscription/abis/Subscription.json
+      eventHandlers:
+        - event: SubscriptionMinted(indexed uint256,indexed address,string,uint256)
+          handler: handleSubscriptionMinted
+      file: Subscription/Subscription.wasm

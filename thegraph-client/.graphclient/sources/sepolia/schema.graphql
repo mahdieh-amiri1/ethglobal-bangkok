@@ -1,0 +1,273 @@
+schema {
+  query: Query
+  subscription: Subscription
+}
+
+"""
+Marks the GraphQL type as indexable entity.  Each type that should be an entity is required to be annotated with this directive.
+"""
+directive @entity on OBJECT
+
+"""Defined a Subgraph ID for an object type"""
+directive @subgraphId(id: String!) on OBJECT
+
+"""
+creates a virtual field on the entity that may be queried but cannot be set manually through the mappings API.
+"""
+directive @derivedFrom(field: String!) on FIELD_DEFINITION
+
+enum Aggregation_interval {
+  hour
+  day
+}
+
+scalar BigDecimal
+
+scalar BigInt
+
+input BlockChangedFilter {
+  number_gte: Int!
+}
+
+input Block_height {
+  hash: Bytes
+  number: Int
+  number_gte: Int
+}
+
+scalar Bytes
+
+"""
+8 bytes signed integer
+
+"""
+scalar Int8
+
+"""Defines the order direction, either ascending or descending"""
+enum OrderDirection {
+  asc
+  desc
+}
+
+type Query {
+  sepolia_storageData(
+    id: ID!
+    """
+    The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
+    """
+    block: Block_height
+    """
+    Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
+    """
+    subgraphError: _SubgraphErrorPolicy_! = deny
+  ): StorageData
+  sepolia_storageDatas(
+    skip: Int = 0
+    first: Int = 100
+    orderBy: StorageData_orderBy
+    orderDirection: OrderDirection
+    where: StorageData_filter
+    """
+    The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
+    """
+    block: Block_height
+    """
+    Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
+    """
+    subgraphError: _SubgraphErrorPolicy_! = deny
+  ): [StorageData!]!
+  """Access to subgraph metadata"""
+  sepolia__meta(block: Block_height): _Meta_
+}
+
+type StorageData {
+  id: ID!
+  userWallet: Bytes!
+  balance: BigInt!
+  number: BigInt!
+  transactionHash: String!
+  blockNumber: BigInt!
+  storedAt: BigInt!
+  chainName: String!
+}
+
+input StorageData_filter {
+  id: ID
+  id_not: ID
+  id_gt: ID
+  id_lt: ID
+  id_gte: ID
+  id_lte: ID
+  id_in: [ID!]
+  id_not_in: [ID!]
+  userWallet: Bytes
+  userWallet_not: Bytes
+  userWallet_gt: Bytes
+  userWallet_lt: Bytes
+  userWallet_gte: Bytes
+  userWallet_lte: Bytes
+  userWallet_in: [Bytes!]
+  userWallet_not_in: [Bytes!]
+  userWallet_contains: Bytes
+  userWallet_not_contains: Bytes
+  balance: BigInt
+  balance_not: BigInt
+  balance_gt: BigInt
+  balance_lt: BigInt
+  balance_gte: BigInt
+  balance_lte: BigInt
+  balance_in: [BigInt!]
+  balance_not_in: [BigInt!]
+  number: BigInt
+  number_not: BigInt
+  number_gt: BigInt
+  number_lt: BigInt
+  number_gte: BigInt
+  number_lte: BigInt
+  number_in: [BigInt!]
+  number_not_in: [BigInt!]
+  transactionHash: String
+  transactionHash_not: String
+  transactionHash_gt: String
+  transactionHash_lt: String
+  transactionHash_gte: String
+  transactionHash_lte: String
+  transactionHash_in: [String!]
+  transactionHash_not_in: [String!]
+  transactionHash_contains: String
+  transactionHash_contains_nocase: String
+  transactionHash_not_contains: String
+  transactionHash_not_contains_nocase: String
+  transactionHash_starts_with: String
+  transactionHash_starts_with_nocase: String
+  transactionHash_not_starts_with: String
+  transactionHash_not_starts_with_nocase: String
+  transactionHash_ends_with: String
+  transactionHash_ends_with_nocase: String
+  transactionHash_not_ends_with: String
+  transactionHash_not_ends_with_nocase: String
+  blockNumber: BigInt
+  blockNumber_not: BigInt
+  blockNumber_gt: BigInt
+  blockNumber_lt: BigInt
+  blockNumber_gte: BigInt
+  blockNumber_lte: BigInt
+  blockNumber_in: [BigInt!]
+  blockNumber_not_in: [BigInt!]
+  storedAt: BigInt
+  storedAt_not: BigInt
+  storedAt_gt: BigInt
+  storedAt_lt: BigInt
+  storedAt_gte: BigInt
+  storedAt_lte: BigInt
+  storedAt_in: [BigInt!]
+  storedAt_not_in: [BigInt!]
+  chainName: String
+  chainName_not: String
+  chainName_gt: String
+  chainName_lt: String
+  chainName_gte: String
+  chainName_lte: String
+  chainName_in: [String!]
+  chainName_not_in: [String!]
+  chainName_contains: String
+  chainName_contains_nocase: String
+  chainName_not_contains: String
+  chainName_not_contains_nocase: String
+  chainName_starts_with: String
+  chainName_starts_with_nocase: String
+  chainName_not_starts_with: String
+  chainName_not_starts_with_nocase: String
+  chainName_ends_with: String
+  chainName_ends_with_nocase: String
+  chainName_not_ends_with: String
+  chainName_not_ends_with_nocase: String
+  """Filter for the block changed event."""
+  _change_block: BlockChangedFilter
+  and: [StorageData_filter]
+  or: [StorageData_filter]
+}
+
+enum StorageData_orderBy {
+  id
+  userWallet
+  balance
+  number
+  transactionHash
+  blockNumber
+  storedAt
+  chainName
+}
+
+type Subscription {
+  sepolia_storageData(
+    id: ID!
+    """
+    The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
+    """
+    block: Block_height
+    """
+    Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
+    """
+    subgraphError: _SubgraphErrorPolicy_! = deny
+  ): StorageData
+  sepolia_storageDatas(
+    skip: Int = 0
+    first: Int = 100
+    orderBy: StorageData_orderBy
+    orderDirection: OrderDirection
+    where: StorageData_filter
+    """
+    The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
+    """
+    block: Block_height
+    """
+    Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
+    """
+    subgraphError: _SubgraphErrorPolicy_! = deny
+  ): [StorageData!]!
+  """Access to subgraph metadata"""
+  sepolia__meta(block: Block_height): _Meta_
+}
+
+"""
+A string representation of microseconds UNIX timestamp (16 digits)
+
+"""
+scalar Timestamp
+
+type _Block_ {
+  """The hash of the block"""
+  hash: Bytes
+  """The block number"""
+  number: Int!
+  """Integer representation of the timestamp stored in blocks for the chain"""
+  timestamp: Int
+  """The hash of the parent block"""
+  parentHash: Bytes
+}
+
+"""The type for the top-level _meta field"""
+type _Meta_ {
+  """
+  Information about a specific subgraph block. The hash of the block
+  will be null if the _meta field has a block constraint that asks for
+  a block number. It will be filled if the _meta field has no block constraint
+  and therefore asks for the latest  block
+  
+  """
+  block: _Block_!
+  """The deployment ID"""
+  deployment: String!
+  """If `true`, the subgraph encountered indexing errors at some past block"""
+  hasIndexingErrors: Boolean!
+}
+
+enum _SubgraphErrorPolicy_ {
+  """Data will be returned even if the subgraph has indexing errors"""
+  allow
+  """
+  If the subgraph has indexing errors, data will be omitted. The default.
+  """
+  deny
+}

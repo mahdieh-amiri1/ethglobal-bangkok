@@ -1,0 +1,76 @@
+specVersion: 0.0.6
+description: MultichainTest subgraph v1
+repository: https://github.com/mahdieh-amiri1/ethglobal-bangkok
+features:
+  - ipfsOnEthereumContracts
+schema:
+  file: ./schema.graphql
+dataSources:
+  - kind: ethereum/contract
+    name: Storage
+    network: {{ NETWORK }}  
+    source:
+      address: "{{CONTRACT_STORAGE_ADDRESS}}"
+      abi: Storage
+      startBlock: {{ CONTRACT_STORAGE_BLOCK }}
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.6
+      language: wasm/assemblyscript
+      entities:
+        - StorageData 
+      abis:
+        - name: Storage
+          file: ./abis/Storage.json
+      eventHandlers:
+        - event: SetData(address,uint256,uint256)
+          handler: handleSetData
+      file: ./src/mappings/Storage.ts
+
+  - kind: ethereum/contract
+    name: Subscription
+    network: {{ NETWORK }}  
+    source:
+      address: "{{CONTRACT_SUBSCRIPTION_ADDRESS}}"
+      abi: Subscription
+      startBlock: {{ CONTRACT_SUBSCRIPTION_BLOCK }}
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.6
+      language: wasm/assemblyscript
+      entities:
+        - SubscriptionNFT
+        - SubscriptionStat 
+      abis:
+        - name: Subscription
+          file: ./abis/Subscription.json
+      eventHandlers:
+        # - event: Transfer(indexed address,indexed address,indexed uint256)
+        #   handler: handleTransfer
+        - event: SubscriptionMinted(indexed uint256,indexed address,string,uint256)
+          handler: handleSubscriptionMinted
+        # - event: Spend(uint256, uint256 indexed) 
+        #   handler: handleSpend 
+      file: ./src/mappings/Subscription.ts
+
+
+  # - kind: ethereum/contract
+  #   name: Paymaster
+  #   network: {{ NETWORK }}  
+  #   source:
+  #     address: "{{CONTRACT_Paymaster_ADDRESS}}"
+  #     abi: Paymaster
+  #     startBlock: {{ CONTRACT_Paymaster_BLOCK }}
+  #   mapping:
+  #     kind: ethereum/events
+  #     apiVersion: 0.0.6
+  #     language: wasm/assemblyscript
+  #     entities:
+  #       - StorageData 
+  #     abis:
+  #       - name: Paymaster
+  #         file: ./abis/Paymaster.json
+  #     eventHandlers:
+  #       - event: event TokenReceived(uint indexed,address indexed,string);
+  #         handler: handleTokenReceived
+  #     file: ./src/mappings/Paymaster.ts

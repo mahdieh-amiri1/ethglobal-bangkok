@@ -1,0 +1,29 @@
+specVersion: 0.0.6
+description: MultichainTest subgraph v1
+repository: http://gitgame.lan/landrocker_blockchain/landrocker-subgraph
+features:
+  - ipfsOnEthereumContracts
+schema:
+  file: ./schema.graphql
+dataSources:
+  - kind: ethereum/contract
+    name: Storage
+    network: arbitrum sepolia  
+    source:
+      address: "0xbe6e139f130d74693c876e85015ed56549ce0057"
+      abi: Storage
+      startBlock: 271706589
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.6
+      language: wasm/assemblyscript
+      entities:
+        - StorageData 
+      abis:
+        - name: Storage
+          file: ./abis/Storage.json
+      eventHandlers:
+        - event: SetData(address,uint256,uint256)
+          handler: handleSetData
+      file: ./src/mappings/Storage.ts
+ 

@@ -1,0 +1,24 @@
+{
+  "name": "my-graph-client",
+  "type": "module",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "start": "ts-node index.ts --transpileOnly",
+    "codegen": "graphclient build",
+    "dev": "graphclient serve-dev"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "description": "",
+  "dependencies": {
+    "ts-node": "^10.9.2"
+  },
+  "devDependencies": {
+    "@graphprotocol/client-cli": "^3.0.7",
+    "@graphql-mesh/transform-prefix": "^0.102.12",
+    "@types/node": "^22.9.0",
+    "typescript": "^5.6.3"
+  }
+}

@@ -1,0 +1,8 @@
+{
+  graphNetworks(first: 5) {
+    id
+    controller
+    graphToken
+    epochManager
+  }
+}

@@ -1,0 +1,35 @@
+
+type StorageData @entity {
+  id: ID! #roleHash
+  userWallet: Bytes!
+  balance: BigInt!
+  number: BigInt!
+  transactionHash: String!
+  blockNumber: BigInt!
+  storedAt: BigInt!
+  chainName:  String!
+}
+
+type SubscriptionNFT @entity {
+  id: ID! #tokenId
+  name: String
+  symbol: String
+  baseUri: String
+  isActive: Boolean # init value false
+  mintedAt: BigInt
+  owner: Bytes
+  transactionHash: String
+  blockNumber: BigInt
+  chainName:  String
+  amount: BigInt
+}
+
+type SubscriptionStat @entity {
+  id: ID! #chainId
+  chainName: String  
+  mintedCount: BigInt!
+}
+
+
+
+
