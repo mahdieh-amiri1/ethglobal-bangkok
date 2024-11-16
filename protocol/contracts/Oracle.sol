@@ -10,12 +10,11 @@ contract Oracle is Ownable{
     int256 public Decimals = 8;
 
     // Events
-    event PriceIdAdded(bytes32 indexed priceId);
-    event PriceIdRemoved(bytes32 indexed priceId);
+    event AssetMapped(address indexed asset, bytes32 priceId);
+    event AssetUnmapped(address indexed asset);
 
     // State variables
-    bytes32[] private priceIds; // Dynamic array for tracked price IDs
-
+    mapping(address => bytes32) private assetToPriceId; // Mapping assets to price IDs
     bytes32 public immutable ethPriceId; // ETH price feed ID
 
     /**
@@ -30,12 +29,38 @@ contract Oracle is Ownable{
     }
 
     /**
-	 * @notice Retrieves the latest price for a specific asset.
-     * @param priceId Price feed ID to fetch.
+     * @notice Maps an asset to a price ID.
+     * @param asset Asset address to map.
+     * @param priceId Price feed ID for the asset.
+     */
+    function mapAssetToPriceId(address asset, bytes32 priceId) external onlyOwner {
+        require(asset != address(0), "Invalid asset address");
+        require(priceId != bytes32(0), "Invalid price ID");
+        require(assetToPriceId[asset] == bytes32(0), "Asset already mapped");
+
+        assetToPriceId[asset] = priceId;
+        emit AssetMapped(asset, priceId);
+    }
+
+    /**
+     * @notice Unmaps an asset from its price ID.
+     * @param asset Asset address to unmap.
+     */
+    function unmapAsset(address asset) external onlyOwner {
+        require(assetToPriceId[asset] != bytes32(0), "Asset not mapped");
+
+        delete assetToPriceId[asset];
+        emit AssetUnmapped(asset);
+    }
+
+    /**
+     * @notice Retrieves the latest price for a specific asset.
+     * @param asset Asset address to fetch price for.
      * @return Latest price of the asset in ETH.
      */
-    function getPrice(bytes32 priceId) external view returns (int64) {
-        require(_isPriceIdTracked(priceId), "Price ID not tracked");
+    function getAssetPrice(address asset) external view returns (int64) {
+        bytes32 priceId = assetToPriceId[asset];
+        require(priceId != bytes32(0), "Asset not mapped");
 
         // Fetch the latest ETH price
         PythStructs.Price memory ethPriceData = pyth.getPriceUnsafe(ethPriceId);
@@ -43,6 +68,7 @@ contract Oracle is Ownable{
 
         int256 normalizedEthPrice = int256(ethPriceData.price) * int256(10**uint256(uint32(-ethPriceData.expo)));
 
+        // Fetch the asset price
         PythStructs.Price memory priceData = pyth.getPriceUnsafe(priceId);
         require(priceData.price > 0, "Invalid asset price");
 
@@ -56,61 +82,11 @@ contract Oracle is Ownable{
     }
 
     /**
-     * @notice Adds a new price ID to the tracked list.
-     * @param priceId Price feed ID to add.
+     * @notice Gets the mapped price ID for a specific asset.
+     * @param asset Asset address to check.
+     * @return Price feed ID for the asset.
      */
-    function addPriceId(bytes32 priceId) onlyOwner external {
-        require(!_isPriceIdTracked(priceId), "Price ID already tracked");
-        priceIds.push(priceId);
-        emit PriceIdAdded(priceId);
-    }
-
-    /**
-     * @notice Removes a price ID from the tracked list.
-     * @param priceId Price feed ID to remove.
-     */
-    function removePriceId(bytes32 priceId) onlyOwner external {
-        require(_isPriceIdTracked(priceId), "Price ID not tracked");
-
-        uint256 length = priceIds.length;
-        for (uint256 i = 0; i < length; i++) {
-            if (priceIds[i] == priceId) {
-                priceIds[i] = priceIds[length - 1]; // Replace with last element
-                priceIds.pop(); // Remove last element
-                emit PriceIdRemoved(priceId);
-                return;
-            }
-        }
-    }
-
-    /**
-     * @notice Retrieves all tracked price IDs.
-     * @return Tracked price IDs.
-     */
-    function getTrackedPriceIds() external view returns (bytes32[] memory) {
-        return priceIds;
-    }
-
-    /**
-     * @notice Checks if a price ID is currently tracked.
-     * @param priceId Price feed ID to check.
-     * @return True if the price ID is tracked, false otherwise.
-     */
-    function isPriceIdTracked(bytes32 priceId) external view returns (bool) {
-        return _isPriceIdTracked(priceId);
-    }
-
-    /**
-     * @dev Internal helper function to check if a price ID is tracked.
-     * @param priceId Price feed ID to check.
-     * @return True if the price ID is tracked, false otherwise.
-     */
-    function _isPriceIdTracked(bytes32 priceId) internal view returns (bool) {
-        for (uint256 i = 0; i < priceIds.length; i++) {
-            if (priceIds[i] == priceId) {
-                return true;
-            }
-        }
-        return false;
+    function getPriceIdForAsset(address asset) external view returns (bytes32) {
+        return assetToPriceId[asset];
     }
 }
