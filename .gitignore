@@ -138,6 +138,8 @@ protocol/.env
 # Hardhat files
 /cache
 /artifacts
+/protocol/cache
+/protocol/artifacts
 
 # TypeChain files
 /typechain
@@ -148,5 +150,7 @@ protocol/.env
 /coverage.json
 
 # Hardhat Ignition default folder for deployments against a local node
-ignition/deployments/chain-31337
+/protocol/ignition/deployments/chain-421614
+/protocol/ignition/deployments/chain-11155111
+/protocol/ignition/deployments/chain-84532
 
