@@ -29,7 +29,7 @@ contract Subscription is ISubscription, OAppReceiver, ERC721 {
     ) OAppCore(_endpoint, _owner) ERC721("McGas", "MCG") {}
 
     function subscriptionOf(uint256 tokenId) public view returns (uint256) {
-        _requireOwned(tokenId);
+        _requireTokenOwned(tokenId);
         return _subscriptions[tokenId];
     }
 
@@ -94,7 +94,7 @@ contract Subscription is ISubscription, OAppReceiver, ERC721 {
     }
 
     function _spendSubscription(uint256 tokenId, uint256 amount) internal {
-        _requireOwned(tokenId);
+        _requireTokenOwned(tokenId);
         _requireEnoughSubscription(tokenId, amount);
         _subscriptions[tokenId] -= amount;
 
@@ -154,7 +154,7 @@ contract Subscription is ISubscription, OAppReceiver, ERC721 {
         emit PaymasterChanged(oldPaymaster, _newPaymaster);
     }
 
-    function _requireOwned(uint256 tokenId) internal view returns (address) {
+    function _requireTokenOwned(uint256 tokenId) internal view returns (address) {
         address owner = _ownerOf(tokenId);
         require(owner != address(0), "Nonexistent token!");
         return owner;
