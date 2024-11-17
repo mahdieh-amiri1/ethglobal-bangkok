@@ -5,13 +5,14 @@ import "@layerzerolabs/oapp-evm/contracts/oapp/OApp.sol";
 import "@openzeppelin/contracts/token/ERC721/ERC721.sol";
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import {ISubscription} from "./interfaces/ISubscription.sol";
+import "@openzeppelin/contracts/access/Ownable.sol"; // Import Ownable
 
 interface IOracle {
     function getAssetPrice(address asset) external view returns (int64);
     function Decimals() external view returns (int256);
 }
 
-contract Subscription is ISubscription, OAppReceiver, ERC721 {
+contract Subscription is Ownable, ERC721, ISubscription, OAppReceiver {
     address public paymaster;
     IOracle public oracle;
     uint256 private _currentTokenId; // Counter for token IDs
@@ -26,7 +27,7 @@ contract Subscription is ISubscription, OAppReceiver, ERC721 {
     constructor(
         address _endpoint,
         address _owner
-    ) OAppCore(_endpoint, _owner) ERC721("McGas", "MCG") {}
+    ) OAppCore(_endpoint, _owner) ERC721("McGas", "MCG") Ownable(_owner)  {}
 
     function subscriptionOf(uint256 tokenId) public view override returns (uint256) {
         _requireTokenOwned(tokenId);
