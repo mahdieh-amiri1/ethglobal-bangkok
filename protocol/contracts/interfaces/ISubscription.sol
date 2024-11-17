@@ -39,7 +39,5 @@ interface ISubscription is IOAppReceiver, IERC721 {
         uint256 amount
     ) external view returns (bool isValid);
 
-    function mint(address to, uint256 amount) external;
-
     function setPaymaster(address _payMaster) external;
 }
