@@ -8,12 +8,11 @@ import {ISubscription} from "./interfaces/ISubscription.sol";
 import "@openzeppelin/contracts/access/Ownable.sol"; // Import Ownable
 
 interface IOracle {
-    function getAssetPrice(address asset) external view returns (uint64);
-
-    function Decimals() external view returns (uint256);
+    function getAssetPrice(address asset) external view returns (int64);
+    function Decimals() external view returns (int256);
 }
 
-contract Subscription is ISubscription, OAppReceiver, ERC721 {
+contract Subscription is Ownable, ERC721, ISubscription, OAppReceiver {
     address public paymaster;
     IOracle public oracle;
     uint256 private _currentTokenId; // Counter for token IDs
@@ -28,7 +27,7 @@ contract Subscription is ISubscription, OAppReceiver, ERC721 {
     constructor(
         address _endpoint,
         address _owner
-    ) OAppCore(_endpoint, _owner) ERC721("McGas", "MCG") Ownable(_owner)  {}
+    ) OAppCore(_endpoint, _owner) ERC721("McGas", "MCG") {}
 
     function subscriptionOf(uint256 tokenId) public view override returns (uint256) {
         _requireTokenOwned(tokenId);
@@ -53,12 +52,16 @@ contract Subscription is ISubscription, OAppReceiver, ERC721 {
             tokenAddress,
             tokenAmount
         );
-        _mintSubscription(to, equivalentETH);
+        uint256 newTokenId = mint(to, equivalentETH);
+
+        emit SubscriptionMinted(newTokenId, to, equivalentETH);
     }
 
     function mintWithNative(address to) external payable {
         require(msg.value > 0, "Insufficient balance");
-        _mintSubscription(to, msg.value);
+        uint256 newTokenId = mint(msg.sender, msg.value);
+
+        emit SubscriptionMinted(newTokenId, to, msg.value);
     }
 
     function spendSubscription(
@@ -111,7 +114,7 @@ contract Subscription is ISubscription, OAppReceiver, ERC721 {
         address tokenAddress,
         uint256 tokenAmount
     ) internal view returns (uint256) {
-        uint64 tokenPriceInETH = oracle.getAssetPrice(tokenAddress);
+        int256 tokenPriceInETH = oracle.getAssetPrice(tokenAddress);
         require(tokenPriceInETH > 0, "Invalid token price from Oracle");
         uint256 price = uint256(tokenPriceInETH);
 
