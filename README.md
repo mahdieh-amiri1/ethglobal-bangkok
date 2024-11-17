@@ -30,11 +30,12 @@ In this scenario, the user purchases a gas subscription on **Chain A** and subse
 2. **User Initiates Transaction on Chain B**:
     - The user prepares to perform a transaction on Chain B, with their gas fee expected to be covered by their active subscription.
 
-3. **Customized Bundler Verification**:
+3. **Customized Bundler Verification** or **LzRead functionality**:
     - The customized bundler intercepts the transaction on Chain B and performs an **off-chain verification** by:
         - Checking the user's subscription status on Chain A.
         - Verifying that the subscription is active and includes the specified time period for which the user has paid.
     - This off-chain check ensures the integrity of the subscription data, preventing reliance on external bundlers for accurate information.
+    - Another way to read the other chain's data is using LzRead functionality as part of OApp protocol in LayerZero.
 
 4. **Database Update to Prevent Race Conditions**:
     - The bundler updates its local off-chain database with pending transaction details, ensuring race conditions are prevented even if the transaction is not finalized yet.
