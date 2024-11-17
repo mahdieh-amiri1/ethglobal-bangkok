@@ -23,7 +23,7 @@ export default function UserPurchaseHistory() {
     <div>
       <div className="max-w-5xl">
         <h2 className="text-xl font-semibold text-foreground sm:text-2xl">
-          History
+          Dashboard
         </h2>
         <div className="mt-6 sm:mt-8 lg:flex lg:items-start lg:gap-12">
           {/* !todo: pass the correct data */}

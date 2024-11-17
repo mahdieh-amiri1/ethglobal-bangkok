@@ -28,7 +28,7 @@ const data = {
           url: "/user/purchase",
         },
         {
-          title: "History",
+          title: "Dashboard",
           url: "/user/history",
         },
       ],
