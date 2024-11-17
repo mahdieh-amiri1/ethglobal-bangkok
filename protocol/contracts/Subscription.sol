@@ -104,7 +104,7 @@ contract Subscription is ISubscription, OAppReceiver, ERC721 {
     function mint(address to, uint256 amount) internal onlyOwner returns (uint256) {
         uint256 newTokenId = ++_currentTokenId;
         _safeMint(to, newTokenId);
-        _subscriptions[newTokenId] = value;
+        _subscriptions[newTokenId] = amount;
 
         return newTokenId;
     }
