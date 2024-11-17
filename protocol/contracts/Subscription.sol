@@ -26,7 +26,7 @@ contract Subscription is ISubscription, OAppReceiver, ERC721 {
     constructor(
         address _endpoint,
         address _owner
-    ) OAppCore(_endpoint, _owner) ERC721("McGas", "MCG") {}
+    ) OAppCore(_endpoint, _owner) ERC721("McGas", "MCG") Ownable(_owner) {}
 
     function subscriptionOf(uint256 tokenId) public view returns (uint256) {
         _requireTokenOwned(tokenId);
