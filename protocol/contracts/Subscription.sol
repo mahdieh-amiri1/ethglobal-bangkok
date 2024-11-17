@@ -2,7 +2,6 @@
 pragma solidity ^0.8.20;
 
 import "@layerzerolabs/oapp-evm/contracts/oapp/OApp.sol";
-import "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts/token/ERC721/ERC721.sol";
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import {ISubscription} from "./interfaces/ISubscription.sol";
@@ -12,7 +11,7 @@ interface IOracle {
     function Decimals() external view returns (int256);
 }
 
-contract Subscription is ISubscription, OAppReceiver, ERC721, Ownable {
+contract Subscription is ISubscription, OAppReceiver, ERC721 {
     address public paymaster;
     IOracle public oracle;
     uint256 private _currentTokenId; // Counter for token IDs
@@ -54,7 +53,7 @@ contract Subscription is ISubscription, OAppReceiver, ERC721, Ownable {
         );
         uint256 newTokenId = _mintSubscription(to, equivalentETH);
 
-        emit SubscriptionMinted(newTokenId, to, tokenURI, equivalentETH);
+        emit SubscriptionMinted(newTokenId, to, equivalentETH);
     }
 
     function mintWithNative(address to) external payable {
@@ -117,11 +116,12 @@ contract Subscription is ISubscription, OAppReceiver, ERC721, Ownable {
         address tokenAddress,
         uint256 tokenAmount
     ) internal view returns (uint256) {
-        int64 tokenPriceInETH = oracle.getAssetPrice(tokenAddress);
+        int256 tokenPriceInETH = oracle.getAssetPrice(tokenAddress);
         require(tokenPriceInETH > 0, "Invalid token price from Oracle");
-        return
-            (uint256(tokenPriceInETH) * tokenAmount) /
-            10 ** uint256(oracle.Decimals());
+        uint256 price = uint256(tokenPriceInETH);
+
+        int256 decimals = oracle.Decimals();
+        return (price * tokenAmount) / (10 ** uint256(decimals));
     }
 
     function _validateTokenTransfer(

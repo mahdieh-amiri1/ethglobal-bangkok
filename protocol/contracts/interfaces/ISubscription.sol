@@ -9,7 +9,6 @@ interface ISubscription is IOAppReceiver, IERC721 {
     event SubscriptionMinted(
         uint256 tokenId,
         address indexed to,
-        string tokenURI,
         uint256 value
     );
     event Spend(uint256 indexed tokenId, uint256 indexed amount);
