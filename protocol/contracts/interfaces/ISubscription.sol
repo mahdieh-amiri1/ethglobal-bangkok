@@ -39,5 +39,13 @@ interface ISubscription is IOAppReceiver, IERC721 {
         uint256 amount
     ) external view returns (bool isValid);
 
+    function mintWithERC20(
+        address to,
+        address tokenAddress,
+        uint256 tokenAmount
+    ) external;
+
+    function mintWithNative(address to) external payable;
+
     function setPaymaster(address _payMaster) external;
 }

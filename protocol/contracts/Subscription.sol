@@ -8,11 +8,12 @@ import {ISubscription} from "./interfaces/ISubscription.sol";
 import "@openzeppelin/contracts/access/Ownable.sol"; // Import Ownable
 
 interface IOracle {
-    function getAssetPrice(address asset) external view returns (int64);
-    function Decimals() external view returns (int256);
+    function getAssetPrice(address asset) external view returns (uint64);
+
+    function Decimals() external view returns (uint256);
 }
 
-contract Subscription is Ownable, ERC721, ISubscription, OAppReceiver {
+contract Subscription is ISubscription, OAppReceiver, ERC721 {
     address public paymaster;
     IOracle public oracle;
     uint256 private _currentTokenId; // Counter for token IDs
@@ -52,16 +53,12 @@ contract Subscription is Ownable, ERC721, ISubscription, OAppReceiver {
             tokenAddress,
             tokenAmount
         );
-        uint256 newTokenId = mint(to, equivalentETH);
-
-        emit SubscriptionMinted(newTokenId, to, equivalentETH);
+        _mintSubscription(to, equivalentETH);
     }
 
     function mintWithNative(address to) external payable {
         require(msg.value > 0, "Insufficient balance");
-        uint256 newTokenId = mint(msg.sender, msg.value);
-
-        emit SubscriptionMinted(newTokenId, to, msg.value);
+        _mintSubscription(to, msg.value);
     }
 
     function spendSubscription(
@@ -114,7 +111,7 @@ contract Subscription is Ownable, ERC721, ISubscription, OAppReceiver {
         address tokenAddress,
         uint256 tokenAmount
     ) internal view returns (uint256) {
-        int256 tokenPriceInETH = oracle.getAssetPrice(tokenAddress);
+        uint64 tokenPriceInETH = oracle.getAssetPrice(tokenAddress);
         require(tokenPriceInETH > 0, "Invalid token price from Oracle");
         uint256 price = uint256(tokenPriceInETH);
 

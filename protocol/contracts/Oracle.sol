@@ -22,7 +22,7 @@ contract Oracle is Ownable{
      * @param pythContractAddress Address of the Pyth contract.
      * @param ethPriceFeedId Price feed ID for ETH.
      */
-    constructor(address pythContractAddress, bytes32 ethPriceFeedId) Ownable(msg.sender) {
+    constructor(address pythContractAddress, bytes32 ethPriceFeedId) {
         require(pythContractAddress != address(0), "Invalid Pyth contract address");
         pyth = IPyth(pythContractAddress);
         ethPriceId = ethPriceFeedId;
